@@ -1,0 +1,68 @@
+Realeased Date: January 11th, 2019
+New Features:
+1) 	Added support for switching between real time and playback. 
+
+Bug Fixed:
+1)	Bug in display delay.(DemoGUI)
+2)	Bug in mode switch.(DemoGUI)
+
+Realeased Date: October 11th, 2018 
+New Features:
+1)	Added interface to denoise by time interval.
+2)	Added interface to denoise and compress.
+3)	Added two emEventPicMode to get buffer or mat after denoising.
+4)	Added denosied pic in FullPic-Event mode.
+5)	Added overload function of getEventDataVector to get corresponding frame number.
+6)	Added interface to get IMU data size.
+7)	Added interface to get IMU data.
+8)	Added interface to set interval time of IMU.
+9)	Added callback mode to get raw data vector.
+10)	Added callback mode to get IMU data.
+
+Bug Fixed:
+1)	Error in playback recorded data (when sensor in Full-Picture mode)
+
+Changed:
+1)	Updated the GUI demo under Windows and Linux. Added 3d display option.
+2)	Updated CeleX_SDK_Reference documentation, added some interface instructions.
+3)	Updated CeleX_SDK_Getting_Started_Guide documentation, changed some GUI interface presentation.
+4)	Added two new drivers(FrontPanel-Ubuntu16.04LTS-x32-5.0.1.tgz, FrontPanel-Ubuntu16.04LTS-x64-5.0.1.tgz) under Linux.
+5)	Added two new samples(DenoisingAndCompressing, GetIMUData) to Samples.
+6)	Updated Sample_User_Manual documentation.
+7)	Updated source code of SDK and CeleXDemo.
+
+Realeased Date: August 3rd, 2018 
+
+New Features:
+1)	Added OpenCV-based interfaces to obtain data of the CelexTM Sensor.
+2)	Added interfaces to adjust the brightness automatically.
+3)	Added Optical-Flow interfaces in FullPic-Event mode.
+4)	Added interfaces to record AVI video.
+5)	Added interfaces to convert Bin file to AVI video.
+6)	Renamed CelexSensorDLL to CeleX4.
+
+Bug Fixed:
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SDK Development Environment:
+ 
+Windows
+   + Windows 7, 8£¬10 (x32 / x64)
+   + VS2015
+   + OpenCV 3.3.0
+   + qt-msvc2015-5.6.3
+ 
+Linux (Ubuntu 14.04 LTS x32 / x64)
+   + Linux 4.4.0-31-generic
+   + g++ 4.8.4
+   + C++
+   + OpenCV 3.3.0
+ 
+Linux (Ubuntu 16.04 LTS x32 / x64)
+   + Linux 4.13.0-32-generic
+   + g++ 5.4.0
+   + C++
+   + OpenCV 3.3.0
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
