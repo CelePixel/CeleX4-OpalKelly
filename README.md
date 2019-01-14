@@ -1,7 +1,7 @@
 # CeleX4-SDK
 SDK for CeleX4 sensor.
 
-![Structure](https://github.com/CelePixel/CeleX-SDK/blob/master/Sources/CeleXDemo/images/SDK_Structure.png)
+![Structure](https://github.com/CelePixel/CeleX4-SDK/tree/master/Sources/CeleXDemo/images/SDK_Structure.png)
 
 * CeleX<sup>TM</sup> is a family of smart image sensor, specially designed for machine vision. Each pixel in CeleX<sup>TM</sup>
 sensor can individually monitor the relative change in light intensity and report an event if a threshold is
