@@ -1,4 +1,4 @@
-# CeleX4-SDK
+# CeleX4
 SDK for CeleX4 sensor.
 
 ![Structure](https://github.com/CelePixel/CeleX4-SDK/blob/master/Sources/CeleXDemo/images/SDK_Structure.png)
@@ -23,7 +23,7 @@ OpenCV-based interfaces to obtain data from the sensor.
 * This SDK provides three working modes of CeleX4 Sensor: Full-Picture data, Event data, and
 Optical-Flow data. Full-Picture and Event data output alternately to create FullPic-Event data.
 
-`The CeleX4-SDK is structured as follows:`
+`The CeleX4 is structured as follows:`
 
 * _DemoGUI_: CeleX4 Demo GUI execution (Windows and Linux).
 * _Documentation_:
