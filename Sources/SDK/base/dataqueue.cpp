@@ -32,9 +32,7 @@ DataQueue::~DataQueue()
 void DataQueue::push(unsigned char *pData, long length)
 {
     DataInfo dataIn;
-    unsigned char* pBuffer = new unsigned char[length];
-    memcpy(pBuffer, pData, length);
-    dataIn.pData = pBuffer;
+    dataIn.pData = pData;
     dataIn.length = length;
     m_queue.push(dataIn);
     m_size += dataIn.length;
