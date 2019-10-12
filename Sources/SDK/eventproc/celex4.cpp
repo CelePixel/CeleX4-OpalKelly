@@ -182,25 +182,31 @@ void CeleX4::pipeOutFPGAData()
 	}
 	uint32_t pageCount;
 	m_pFrontPanel->wireOut(0x21, 0x1FFFFF, &pageCount);
-	if (pageCount > MAX_PAGE_COUNT)
-		pageCount = MAX_PAGE_COUNT;
 	m_uiPageCount = pageCount;
 	//cout << "-------------- pageCount = " << pageCount << endl;
 	int blockSize = 128;
 	long length = (long)(pageCount * blockSize);
-	if (NULL == m_pReadBuffer)
-		m_pReadBuffer = new unsigned char[128 * MAX_PAGE_COUNT];
+	unsigned char* pData = new unsigned char[length];
 	//Return the number of bytes read or ErrorCode (<0) if the read failed. 
-	long dataLen = m_pFrontPanel->blockPipeOut(0xa0, blockSize, length, m_pReadBuffer);
+	long dataLen = m_pFrontPanel->blockPipeOut(0xa0, blockSize, length, pData);
 	if (dataLen > 0)
 	{
 		//record sensor data
 		if (m_pDataRecorder->isRecording())
 		{
-			m_pDataRecorder->writeData(m_pReadBuffer, dataLen);
+			m_pDataRecorder->writeData(pData, dataLen);
 		}
-		if (getPlaybackState() == CeleX4::NoBinPlaying)
-			m_pDataProcessThread->addData(m_pReadBuffer, dataLen);
+		if (dataLen != length)
+		{
+			unsigned char* dataIn = new unsigned char[dataLen];
+			memcpy(dataIn, pData, dataLen);
+			m_pDataProcessThread->addData(dataIn, dataLen);
+			delete[] pData;
+		}
+		else
+		{
+			m_pDataProcessThread->addData(pData, dataLen);
+		}
 	}
 	else if (dataLen < 0) //read failed
 	{
@@ -510,20 +516,20 @@ bool CeleX4::readPlayBackData(long length)
 {
 	//cout << __FUNCTION__ << endl;
 	bool eof = false;
-	int maxLen = 128 * MAX_PAGE_COUNT;
-	int lenToRead = length > maxLen ? maxLen : length;
+	int lenToRead = length;
 
-	if (NULL == m_pReadBuffer)
-		m_pReadBuffer = new unsigned char[maxLen];
-
-	while (true && m_pDataProcessThread->queueSize() < 1000000)
+	char* data = new char[lenToRead];
+	int dataLen = 0;
+	while (true && m_pDataProcessThread->queueSize() < 1000000/*000*/)
 	{
-		m_ifstreamPlayback.read((char*)m_pReadBuffer, lenToRead);
-
-		int dataLen = m_ifstreamPlayback.gcount();
+		m_ifstreamPlayback.read((char*)data, lenToRead);
+		dataLen = m_ifstreamPlayback.gcount();
 		if (dataLen > 0)
-			m_pDataProcessThread->addData(m_pReadBuffer, dataLen);
-
+		{
+			unsigned char* dataIn = new unsigned char[dataLen];
+			memcpy(dataIn, data, dataLen);
+			m_pDataProcessThread->addData((unsigned char*)dataIn, dataLen);
+		}
 		if (m_ifstreamPlayback.eof())
 		{
 			eof = true;
@@ -533,6 +539,7 @@ bool CeleX4::readPlayBackData(long length)
 			break;
 		}
 	}
+	delete[] data;
 	return eof;
 }
 
