@@ -132,14 +132,14 @@ void GLWidget::paintGL()
     eyeY = centerY - eyeR * sin(phi);
     eyeZ = centerZ - eyeR * cos(theta) * cos(phi);
 
-    //视点
+    //view point
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(fovy, 1.0, MY_MINDISTANCE, MY_MAXDISTANCE);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    //照相机的坐标，原点，坐标系的方向
+    //camera coordinate
     gluLookAt(  eyeX, eyeY, eyeZ,
                 centerX, centerY, centerZ,
                 upX, upY, upZ);
@@ -150,7 +150,7 @@ void GLWidget::paintGL()
     glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
 
-    // 坐标轴显示
+    // show coordinate
     glColor3d(1.0, 0.0, 0.0);
     drawCube(axisSize, axisThick, axisThick, axisSize / 2., 0, 0, ms_jade, 45.0, 1.0, 0.0, 0.0);
     glColor3d(0.0, 1.0, 0.0);
@@ -168,22 +168,20 @@ void GLWidget::resizeGL(int w, int h)
     {
         h = 1;
     }
-    //重置当前的视口（Viewport）
+    //Viewport
     glViewport(0, 0, (GLint)w, (GLint)h);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    //选择投影矩阵。
+    //projection matrix
     glMatrixMode(GL_PROJECTION);
 
-    //重置投影矩阵
     glLoadIdentity();
 
-    //建立透视投影矩阵
+    //Perspective matrix
     gluPerspective(45.0, (GLfloat)w / (GLfloat)h, 0.1, 100.0);
     //gluPerspective(45.0,(GLfloat)width() / (GLfloat)height(),0.1,100.0);
-    // 选择模型观察矩阵
+    // model view matrix
     glMatrixMode(GL_MODELVIEW);
 
-    // 重置模型观察矩阵。
     glLoadIdentity();
 }
 
@@ -326,17 +324,11 @@ void GLWidget::initParam(void)
 }
 
 void GLWidget::initialize() {
-    //设置光源--------------------------------------
-    ///GLfloat lightPosition[4] = { 10.0, -10.0, -20.0, 0.0 }; //光源位置
-    ///GLfloat lightDirection[3] = { 0.0, 0.0, 0.0}; //光源方向
-    ///GLfloat lightDiffuse[3]  = { 1.2,  1.2, 1.2  }; //漫反射
-    ///GLfloat lightAmbient[3]  = { 0.15, 0.15, 0.15 }; //环境光
-    ///GLfloat lightSpecular[3] = { 1.0,   1.0, 1.0  }; //镜面
-    GLfloat lightPosition[4] = { 0.0, -10.0, -5.0, 0.0 }; //光源位置
-    GLfloat lightDirection[3] = { 0.0, 0.0, 0.0 }; //光源方向
-    GLfloat lightDiffuse[3] = { 0.7,  0.7, 0.7 }; //漫反射
-    GLfloat lightAmbient[3] = { 0.25, 0.25, 0.25 }; //环境光
-    //GLfloat lightSpecular[3] = { 1.0,   1.0, 1.0  }; //镜面
+    GLfloat lightPosition[4] = { 0.0, -10.0, -5.0, 0.0 };
+    GLfloat lightDirection[3] = { 0.0, 0.0, 0.0 };
+    GLfloat lightDiffuse[3] = { 0.7,  0.7, 0.7 };
+    GLfloat lightAmbient[3] = { 0.25, 0.25, 0.25 };
+    //GLfloat lightSpecular[3] = { 1.0,   1.0, 1.0  };
 
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
@@ -362,12 +354,10 @@ void GLWidget::drawPointsAsCube()
     {
         for (int i = 0; i < v.size() - 1; ++i,++i)
         {
-            ///位置
             GLdouble x = (768 - (GLdouble)v[i].col - 383) / 768;
             GLdouble y = (640 - (GLdouble)v[i].row - 321) / 640;
             GLdouble z = (GLdouble)v[i].t / (eventTimeSlice * 1000 / 0.16);
 
-            ///颜色
             if (z == 0)
             {
                 glColor3d(1.0, 1.0, 1.0);
@@ -433,7 +423,7 @@ void GLWidget::drawBoundingBox()
     drawCube(boundingBoxThick, boundingBoxThick, 2, 1 / 2., 1 / 2., 1, ms_jade, 45.0, 0.0, 0.0, 1.0);
 }
 
-//立方体绘制
+//draw cube
 void GLWidget::drawCube(double a, double b, double c, double x, double y, double z, MaterialStruct color)
 {
     GLdouble vertex[][3] = {
@@ -446,7 +436,7 @@ void GLWidget::drawCube(double a, double b, double c, double x, double y, double
         { a / 2.0,  b / 2.0,  c / 2.0 },
         { -a / 2.0,  b / 2.0,  c / 2.0 }
     };
-    int face[][4] = {//面
+    int face[][4] = {
                      { 3, 2, 1, 0 },
                      { 1, 2, 6, 5 },
                      { 4, 5, 6, 7 },
@@ -454,7 +444,7 @@ void GLWidget::drawCube(double a, double b, double c, double x, double y, double
                      { 0, 1, 5, 4 },
                      { 2, 3, 7, 6 }
                     };
-    GLdouble normal[][3] = {//法向
+    GLdouble normal[][3] = {
                             { 0.0, 0.0, -1.0 },
                             { 1.0, 0.0, 0.0 },
                             { 0.0, 0.0, 1.0 },
@@ -467,10 +457,10 @@ void GLWidget::drawCube(double a, double b, double c, double x, double y, double
     glMaterialfv(GL_FRONT, GL_DIFFUSE, color.diffuse);
     glMaterialfv(GL_FRONT, GL_SPECULAR, color.specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, &color.shininess);
-    glTranslated(x, y, z);//平移
+    glTranslated(x, y, z);
     glBegin(GL_QUADS);
     for (int j = 0; j < 6; ++j) {
-        glNormal3dv(normal[j]); //设置法向
+        glNormal3dv(normal[j]);
         for (int i = 0; i < 4; ++i) {
             glVertex3dv(vertex[face[j][i]]);
         }
@@ -480,7 +470,7 @@ void GLWidget::drawCube(double a, double b, double c, double x, double y, double
 }
 
 
-// 旋转的立方体
+// rotate cube
 void GLWidget::drawCube(double a, double b, double c,
                         double x, double y, double z,
                         MaterialStruct color,
@@ -494,7 +484,7 @@ void GLWidget::drawCube(double a, double b, double c,
         nz = nz / nn;
     }
     glPushMatrix();
-    glTranslated(x, y, z);//平移
+    glTranslated(x, y, z);
     glPushMatrix();
     if (theta != 0 && nn > 0.0)
         glRotated(theta, nx, ny, nz);
@@ -503,11 +493,10 @@ void GLWidget::drawCube(double a, double b, double c,
     glPopMatrix();
 }
 
-//文字绘制
+//draw text
 void GLWidget::drawString(string str, int w, int h, int x0, int y0)
 {
     glDisable(GL_LIGHTING);
-    // 平行投影
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -516,7 +505,6 @@ void GLWidget::drawString(string str, int w, int h, int x0, int y0)
     glPushMatrix();
     glLoadIdentity();
 
-    // 绘制
     glRasterPos2f(x0, y0);
     int size = (int)str.size();
     for (int i = 0; i < size; ++i) {
