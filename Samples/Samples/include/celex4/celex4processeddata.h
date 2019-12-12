@@ -34,6 +34,8 @@ public:
 	inline void setFrameDataVector(FrameData frameData) { m_frameData = frameData; }
 	inline FrameData getFrameDataVector() { return m_frameData; }
 
+	inline void setFixedNumEventDataVector(FrameData fixedeventData) { m_fixedEventData= fixedeventData; }
+	inline FrameData getFixedNumEventDataVector() { return m_fixedEventData; }
 
 	inline void setIMUDataVector(std::vector<IMUData> IMUData) { m_vectorIMUData.swap(IMUData); }
 	inline std::vector<IMUData> getIMUDataVector() { return m_vectorIMUData; }
@@ -58,10 +60,10 @@ public:
 			return m_pEventDenoisedGrayPic;
 		case EventCountPic:
 			return m_pEventCountPic;
-		case EventDenoisedByTimeBinaryPic:
-			return m_pEventDenoisedByTimeBinaryPic;
-		case EventDenoisedByTimeGrayPic:
-			return m_pEventDenoisedByTimeGrayPic;
+		//case EventDenoisedByTimeBinaryPic:
+		//	return m_pEventDenoisedByTimeBinaryPic;
+		//case EventDenoisedByTimeGrayPic:
+		//	return m_pEventDenoisedByTimeGrayPic;
 		default:
 			break;
 		}
@@ -85,10 +87,10 @@ public:
 			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedGrayPic); 
 		case EventCountPic:
 			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventCountPic);
-		case EventDenoisedByTimeBinaryPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedByTimeBinaryPic);
-		case EventDenoisedByTimeGrayPic:
-			return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedByTimeGrayPic);
+		//case EventDenoisedByTimeBinaryPic:
+		//	return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedByTimeBinaryPic);
+		//case EventDenoisedByTimeGrayPic:
+		//	return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventDenoisedByTimeGrayPic);
 		default:
 			break;
 		}
@@ -102,9 +104,10 @@ public:
 	inline cv::Mat getOpticalFlowSpeedPicMat() { return cv::Mat(cv::Size(768, 640), CV_8UC1, m_pEventOpticalFlowSpeed); }
 
 private:
-	std::vector<EventData> m_vectorEventData;	//-----------------------------
-	std::vector<IMUData> m_vectorIMUData;	//-----------------------------
-	FrameData			 m_frameData;
+	std::vector<EventData> m_vectorEventData;	
+	std::vector<IMUData> m_vectorIMUData;	
+	FrameData			 m_frameData;	
+	FrameData			 m_fixedEventData;
 	unsigned char*    m_pFullPicBuffer;
 	unsigned char*    m_pEventBinaryPic;
 	unsigned char*    m_pEventAccumulatedPic;

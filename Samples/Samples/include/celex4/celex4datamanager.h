@@ -17,7 +17,7 @@ public:
 	virtual void onFrameDataUpdated(CeleX4ProcessedData* data) = 0;
 };
 
-class Subject
+class CX4Subject
 {
 public:
 	virtual void registerData(CeleX4DataManager* observer, CeleX4DataManager::emDataType type) = 0;
@@ -25,7 +25,7 @@ public:
 	virtual void notify(CeleX4DataManager::emDataType dataType) = 0;
 };
 
-class CX4SensorDataServer : public Subject
+class CX4SensorDataServer : public CX4Subject
 {
 public:
 	CX4SensorDataServer() : m_pObserver(NULL), m_pCX4ProcessedData(NULL)

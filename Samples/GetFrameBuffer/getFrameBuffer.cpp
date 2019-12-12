@@ -59,6 +59,7 @@ int main()
 				memcpy(pEventBuffer, pCelex->getEventPicBuffer(EventBinaryPic), imgSize); //event binary pic
 				cv::Mat matFullPic(640, 768, CV_8UC1, pFullPicBuffer);
 				cv::Mat matEventPic(640, 768, CV_8UC1, pEventBuffer);
+				cv::Mat matEventPic(640, 768, CV_8UC1, pEventBuffer);
 
 				cv::imshow("Event-FullPic", matFullPic);
 				cv::imshow("Event-EventPic", matEventPic);

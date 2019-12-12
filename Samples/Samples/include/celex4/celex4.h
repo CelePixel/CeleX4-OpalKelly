@@ -37,7 +37,7 @@
 #include <list>
 #include <fstream>
 #include <opencv2/opencv.hpp>
-
+#include "../celextypes.h"
 #define IMU_DATA_MAX_SIZE    1000
 
 enum emSensorMode {
@@ -54,8 +54,8 @@ enum emEventPicMode {
 	EventDenoisedBinaryPic = 4,
 	EventDenoisedGrayPic = 5,
 	EventCountPic = 6,
-	EventDenoisedByTimeBinaryPic = 7,
-	EventDenoisedByTimeGrayPic = 8
+	//EventDenoisedByTimeBinaryPic = 7,
+	//EventDenoisedByTimeGrayPic = 8
 };
 
 //for bin file reader
@@ -68,15 +68,6 @@ typedef struct BinFileAttributes
 	long length;
 }BinFileAttributes;
 
-typedef struct EventData
-{
-	uint16_t col;
-	uint16_t row;
-	uint8_t  brightness;
-	int8_t   p; //-1: intensity weakened; 1: intensity is increased; 0 intensity unchanged
-	uint32_t t;
-}EventData;
-
 typedef struct FrameData
 {
 	std::vector<EventData> vecEventData;
@@ -84,6 +75,22 @@ typedef struct FrameData
 }FrameData;
 
 typedef struct IMUData {
+	//int16_t       x_GYROS;
+	//int16_t       y_GYROS;
+	//int16_t       z_GYROS;
+	//uint32_t      t_GYROS;
+	//int16_t       x_ACC;
+	//int16_t       y_ACC;
+	//int16_t       z_ACC;
+	//uint32_t      t_ACC;
+	//int16_t       x_GYROS_OFST;
+	//int16_t       y_GYROS_OFST;
+	//int16_t       z_GYROS_OFST;
+	//uint32_t      t_GYROS_OFST;
+	//int16_t       x_ACC_OFST;
+	//int16_t       y_ACC_OFST;
+	//int16_t       z_ACC_OFST;
+	//uint32_t      t_ACC_OFST;
 	double			x_GYROS;
 	double			y_GYROS;
 	double			z_GYROS;
@@ -92,14 +99,11 @@ typedef struct IMUData {
 	double			y_ACC;
 	double			z_ACC;
 	uint32_t		t_ACC;
-	double			x_GYROS_OFST;
-	double			y_GYROS_OFST;
-	double			z_GYROS_OFST;
-	uint32_t		t_GYROS_OFST;
-	double			x_ACC_OFST;
-	double			y_ACC_OFST;
-	double			z_ACC_OFST;
-	uint32_t		t_ACC_OFST;
+	double			x_MAG;
+	double			y_MAG;
+	double			z_MAG;
+	uint32_t		t_MAG;
+	double			x_TEMP;
 	uint64_t		frameNo;
 } IMUData;
 
@@ -112,6 +116,7 @@ class CeleX4ProcessedData;
 class CX4SensorDataServer;
 class EventProcessing;
 class FPGADataProcessor;
+class DataRecorder;
 class CELEX_EXPORTS CeleX4
 {
 public:
@@ -143,6 +148,14 @@ public:
 		InitializeFPGAFailed,
 		PowerUpFailed,
 		ConfigureFailed
+	};
+
+	enum PlaybackState {
+		NoBinPlaying = 0,
+		Playing,
+		BinReadFinished,
+		PlayFinished,
+		Replay
 	};
 
 	typedef struct TimeInfo
@@ -187,8 +200,11 @@ public:
 	cv::Mat getEventPicMat(emEventPicMode mode);
 
 	bool getEventDataVector(std::vector<EventData> &vector);
-
 	bool getEventDataVector(std::vector<EventData> &vector, uint64_t& frameNo);
+
+	//---------------------------------------------------------------------------------------------test
+	void setVecSizeAndOverlap(unsigned long vecSize, unsigned long overlap);
+	bool getFixedNumEventDataVec(/*long length, long overlapLen, */std::vector<EventData> &vector, uint64_t& frameNo);
 
 	void setThreshold(uint32_t value);
 	uint32_t getThreshold();
@@ -258,6 +274,8 @@ public:
 	long getPlaybackFileSize();
 	bool setPlayBackOffset(long offset);
 	void saveSelectedBinFile(std::string filePath, long fromPos, long toPos, int hour, int minute, int second);
+	CeleX4::PlaybackState getPlaybackState();
+	void setPlaybackState(CeleX4::PlaybackState state);
 
 	BinFileAttributes getAttributes(std::string binFile);
 	void convertBinToAVI(std::string binFile, emEventPicMode picMode, uint32_t frameTime, uint32_t intervalTime, cv::VideoWriter writer);
@@ -268,6 +286,7 @@ public:
 	int getIMUDataSize();
 	int getIMUData(int count, std::vector<IMUData>& data);
 	void setIMUIntervalTime(uint32_t value);
+	int getIMUData(std::vector<IMUData>& data);
 
 	bool denoisingByTimeInterval(std::vector<EventData> vec, cv::Mat &mat);
 	bool denoisingAndCompresing(std::vector<EventData> vec, float compressRatio, cv::Mat &mat);
@@ -292,9 +311,7 @@ public:
 	std::vector<int> getDataLengthPerSpecial();
 	std::vector<unsigned long> getEventCountListPerSpecial();
 
-
 private:
-	void initializeFPGA(uint32_t value = 0);
 	bool powerUp();
 	bool configureSettings();
 	void parseSliderSequence();
@@ -310,19 +327,21 @@ private:
 	std::vector<std::string>         m_vecAdvancedNames;   //Advanced Setting Names
 	std::vector<ControlSliderInfo>   m_vecSensorControlList;
 	std::ifstream                    m_ifstreamPlayback;
-	std::ofstream                    m_ofstreamRecord;
+
 	FrontPanel*                      m_pFrontPanel;
 	HHSequenceMgr*                   m_pSequenceMgr;
 	DataProcessThread*               m_pDataProcessThread;
 	DataReaderThread*                m_pDataReaderThread;
+	DataRecorder*                    m_pDataRecorder;
+	unsigned char*                   m_pReadBuffer;
+
 	uint32_t                         m_uiFullPicFrameTime;
 	uint32_t                         m_uiEventFrameTime;
 	uint32_t                         m_uiFEFrameTime;
 	uint32_t                         m_uiOverlapTime;
 	uint32_t                         m_uiClockRate;
-	int                              m_iTimeStartRecord;
+
 	TimeInfo                         m_stTimeRecorded;
-	bool                             m_bRecording;
 	long                             m_lPlaybackFileSize;
 	//for test
 	uint32_t                         m_uiPageCount;
@@ -331,16 +350,8 @@ private:
 	bool                             m_bAutoAdjustBrightness;
 	//
 	std::ifstream					 m_ifstreamBin;
+    bool                             m_bRecordingVideo;
 
-	//for denoising and compressing
-	long							m_lPreT;
-	float							m_fTSum;
-	long							m_lCount;
-	float							m_fDenoiseCount;
-	float							m_fCompressCount;
-	int								m_iDelta;
-	float							m_fTao;
-	cv::Mat							m_MatCompressTemplateImg;
 };
 
 #endif // CELEX_H
